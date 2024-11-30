@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Clientes</title>
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .buttons {
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h1>Bem-vindo ao Sistema de Cadastro de Clientes</h1>
+
+<div class="buttons">
+  <!-- Botão para Cadastrar Cliente -->
+  <a href="/cadastroCliente" class="btn btn-primary">
+    <button>Cadastrar Cliente</button>
+  </a>
+
+  <!-- Botão para Listar Clientes -->
+  <a href="/listaCliente" class="btn btn-secondary">
+    <button>Listar Clientes</button>
+  </a>
+</div>
+</body>
+</html>
