@@ -105,7 +105,7 @@ public class Pedido {
     }
 
     @Transactional
-    public void finalizarPedido(){
+    public void finalizarPedido(Estoque estoque){
         try {
             for (Produto produto : produtos) {
                 estoque.atualizarEstoque(produto, 1);

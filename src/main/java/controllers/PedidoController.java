@@ -1,14 +1,15 @@
 package controllers;
 
+import entities.Cliente;
+import entities.Estoque;
 import entities.Pedido;
 import entities.Produto;
-import entities.Cliente;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import repository.PedidoRepository;
 import repository.ClienteRepository;
+import repository.PedidoRepository;
 import repository.ProdutoRepository;
 
 import java.time.LocalDateTime;
@@ -30,6 +31,9 @@ public class PedidoController {
 
     @Autowired
     private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private Estoque estoque;
 
     @GetMapping("/cliente/{clienteId}")
     public List<Pedido> listarPedidosCliente(@PathVariable Long clienteId) {
@@ -78,7 +82,7 @@ public class PedidoController {
                 });
 
         try {
-            pedido.finalizarPedido(); // Chama o método que atualiza o estoque e finaliza o pedido
+            pedido.finalizarPedido(estoque);
             pedido.setStatus("entregue");
             logger.info("Pedido finalizado com sucesso: {}", pedidoId);
             return pedidoRepository.save(pedido);

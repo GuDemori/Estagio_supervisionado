@@ -23,6 +23,9 @@ public class Estoque {
     public Estoque(){}
 
     public void adicionarProduto(Produto produto, int quantidade){
+        if (produto == null || quantidade == 0){
+            throw new IllegalArgumentException("Produto ou quantidade inválidos");
+        }
         try{
             ProdutoEstoque produtoEstoque = new ProdutoEstoque(produto, this, quantidade);
             produtos.add(produtoEstoque);
@@ -34,6 +37,11 @@ public class Estoque {
     }
 
     public void atualizarEstoque(Produto produto, int quantidadeVendida){
+
+        if (produto == null || quantidadeVendida <= 0){
+            throw new IllegalArgumentException("Produto ou quantidade vendida inválidos");
+        }
+
         try{
             ProdutoEstoque produtoEstoque = produtos.stream()
                     .filter(pe -> pe.getProduto().equals(produto))
