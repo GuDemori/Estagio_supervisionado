@@ -76,6 +76,18 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-commons</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.r2dbc</groupId>
+            <artifactId>r2dbc-spi</artifactId>
+            <version>0.9.0.RELEASE</version> <!-- Ajuste para a versão compatível com sua stack -->
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.20.0</version> <!-- Ajuste a versão conforme necessário -->
+        </dependency>
+
     </dependencies>
 
     <build>
