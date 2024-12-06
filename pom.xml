@@ -12,7 +12,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.5</version> <!-- Verifique a versão mais recente -->
-        <relativePath/> <!-- Look up parent from repository -->
+        <relativePath/>
     </parent>
 
     <repositories>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.3.0</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -63,13 +63,6 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.0.2</version>
-        </dependency>
-
-        <!-- Hibernate Core -->
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>6.5.3.Final</version>
         </dependency>
 
         <!-- JetBrains Annotations -->
