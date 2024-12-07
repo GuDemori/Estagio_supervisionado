@@ -12,6 +12,9 @@ public class ProdutoEstoque {
 
     private static final Logger logger = LoggerFactory.getLogger(ProdutoEstoque.class);
 
+    private static final String ERRO_QUANTIDADE_NEGATIVA = "Quantidade não pode ser negativa.";
+    private static final String ERRO_QUANTIDADE_LOG = "Quantidade não pode ser negativa para produtos em estoque. Produto: {}. Estoque: {}";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -30,12 +33,21 @@ public class ProdutoEstoque {
     @Column(name = "QUANTIDADE", nullable = false)
     private int quantidade;
 
+    /**
+     * Construtor padrão para JPA
+     */
     public ProdutoEstoque(){}
 
+    /**
+     * Construtor completo para inicializar ProdutoEstoque
+     *
+     * @param produto
+     * @param estoque
+     * @param quantidade
+     * @throws IllegalArgumentException se quantidade for negativa
+     */
     public ProdutoEstoque(Produto produto, Estoque estoque, int quantidade){
-        if (quantidade < 0){
-            throw new IllegalArgumentException("Quantidade não pode ser negativa");
-        }
+        validarQuantidade(quantidade);
         this.produto = produto;
         this.estoque = estoque;
         this.quantidade = quantidade;
@@ -67,15 +79,54 @@ public class ProdutoEstoque {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
-        if (quantidade < 0) {
-
-            logger.error("Quantidade não pode ser negativa para produtos em estoque. Produto: {}. Estoque: {}",
-                    produto.getNomeProduto(), estoque.getId());
-            throw new IllegalArgumentException("Quantidade não pode ser negativa");
+    /**
+     *Valida se a quantidade é positiva
+     *
+     * @param quantidade
+     * @throws IllegalArgumentException se quantidade for menor que 0
+     */
+    private void validarQuantidade(int quantidade){
+        if (quantidade < 0){
+            logError();
+            throw new IllegalArgumentException(ERRO_QUANTIDADE_NEGATIVA);
         }
+    }
+
+    /**
+     * Método utilizado para log de informações
+     *
+     * @param mensagem Mensagem para o log
+     */
+    private void logInfo(String mensagem){
+        logger.info("{} Produto: {}. Estoque: {}. Quantidade: {}.",
+                mensagem, produto != null ? produto.getNomeProduto() : "Desconhecido",
+                estoque != null ? estoque.getId() : "Desconhecido", quantidade);
+    }
+
+    /**
+     * Método utilizado para log de erros
+     */
+    private void logError(){
+        logger.error(ERRO_QUANTIDADE_LOG,
+                produto != null ? produto.getNomeProduto() : "Desconhecido",
+                estoque != null ? estoque.getId() : "Desconhecido", quantidade);
+    }
+
+    /**
+     * Representação em texto da entity ProdutoEstoque
+     *
+     * @return String com informações do ProdutoEstoque
+     */
+    @Override
+    public String toString(){
+        return String.format("ProdutoEstoque[id=%d, produto=%s, estoque=%s, quantidade=%d]",
+                id, produto != null ? produto.getNomeProduto() : "Desconhecido",
+                estoque != null ? estoque.getId() : "Desconhecido", quantidade);
+    }
+
+    public void setQuantidade(int quantidade) {
+        validarQuantidade(quantidade);
         this.quantidade = quantidade;
-        logger.info("Quantidade atualizada para o produto {} no estoque {}. Nova quantidade: {}",
-                produto.getNomeProduto(), estoque.getId(), quantidade);
+        logInfo("Quantidade atualizada para o produto no estoque.");
     }
 }

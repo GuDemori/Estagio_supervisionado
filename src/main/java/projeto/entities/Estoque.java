@@ -22,54 +22,85 @@ public class Estoque {
 
     public Estoque(){}
 
+    /**
+     * Adiciona um novo produto no estoque
+     *
+     * @param produto
+     * @param quantidade
+     */
     public void adicionarProduto(Produto produto, int quantidade){
-        if (produto == null || quantidade == 0){
-            throw new IllegalArgumentException("Produto ou quantidade inválidos");
-        }
-        try{
-            ProdutoEstoque produtoEstoque = new ProdutoEstoque(produto, this, quantidade);
-            produtos.add(produtoEstoque);
-            logger.info("Produto {} adicionado ao estoque com quantidade: {}", produto.getNomeProduto(), quantidade);
-        }catch(Exception e){
-            logger.error("Erro ao adicionar produto {} ao estoque", produto.getNomeProduto());
-            throw new RuntimeException("Erro ao adicionar produto ao estoque", e);
-        }
+        validarProdutoEQuantidade(produto, quantidade);
+
+        ProdutoEstoque produtoEstoque = new ProdutoEstoque(produto, this, quantidade);
+        produtos.add(produtoEstoque);
+
+        logger.info("produto {} adicionado ao estoque com quantidade {}",
+                produto.getNomeProduto(), quantidade);
     }
 
+    /**
+     * Atualiza o estoque para um produto existente
+     *
+     * @param produto Produto a ser atualizado
+     * @param quantidadeVendida Quantidade vendida
+     */
     public void atualizarEstoque(Produto produto, int quantidadeVendida){
 
-        if (produto == null || quantidadeVendida <= 0){
-            throw new IllegalArgumentException("Produto ou quantidade vendida inválidos");
+        validarProdutoEQuantidade(produto, quantidadeVendida);
+
+        ProdutoEstoque produtoEstoque = buscarProdutoEstoque(produto);
+
+        int novaQuantidade = produtoEstoque.getQuantidade() - quantidadeVendida;
+        if (novaQuantidade < 0){
+            String mensagemErro = String.format(
+                    "Estoque insuficiente para o produto: %s. Quantidade atual: %d, Tentativa de venda: %d",
+                    produto.getNomeProduto(), produtoEstoque.getQuantidade(), quantidadeVendida);
+            logger.error(mensagemErro);
+            throw new IllegalStateException(mensagemErro);
         }
 
-        try{
-            ProdutoEstoque produtoEstoque = produtos.stream()
-                    .filter(pe -> pe.getProduto().equals(produto))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado no estoque"));
+        produtoEstoque.setQuantidade(novaQuantidade);
+        logger.info("Estoque atualizado para o produto {}: nova quantidade: {}",
+                produto.getNomeProduto(), novaQuantidade);
 
-            int novaQuantidade = produtoEstoque.getQuantidade() - quantidadeVendida;
-            if (novaQuantidade < 0){
-                throw new IllegalStateException("Estoque insuficiente para o produto: " + produto.getNomeProduto());
-            }
-
-            produtoEstoque.setQuantidade(novaQuantidade);
-            logger.info("Estoque atualizado para o produto {}: nova quantidade: {}", produto.getNomeProduto(), novaQuantidade);
-        }catch (Exception e){
-            logger.error("Erro ao atualizar o estoque para o produto {}", produto.getNomeProduto());
-            throw new RuntimeException("Erro ao atualizar o estoque", e);
-        }
     }
 
+    /**
+     *  Exibe todos os produtos e suas quantidades no estoque.
+     */
     public void exibirEstoque(){
-        try{
-            produtos.forEach(ProdutoEstoque -> logger.info("Produto: {}, Estoque: {}",
-                    ProdutoEstoque.getProduto().getNomeProduto(),
-                    ProdutoEstoque.getQuantidade()));
-        }catch (Exception e){
-            logger.error("Erro ao exibir o estoque", e);
-            throw new RuntimeException("erro ao exibir o estoque", e);
+        produtos.forEach(produtoEstoque ->
+                logger.info("Produto: {}, Estoque: {}",
+                        produtoEstoque.getProduto().getNomeProduto(),
+                        produtoEstoque.getQuantidade()));
+    }
+
+    /**
+     * Validação de produto e quantidade
+     *
+     * @param produto Produto a ser adicionado
+     * @param quantidade Quantidade inicial do produto
+     */
+    private void validarProdutoEQuantidade(Produto produto, int quantidade) {
+
+        if (produto == null || quantidade < 0){
+            throw new IllegalArgumentException("Produto ou quantidade inválidos");
         }
+
+    }
+
+    /**
+     * Busca um ProdutoEstoque pelo produto associado.
+     *
+     * @param produto Produto a ser buscado.
+     * @return ProdutoEstoque associado ao produto.
+     */
+    private ProdutoEstoque buscarProdutoEstoque(Produto produto) {
+        return produtos.stream()
+                .filter(pe -> pe.getProduto().equals(produto))
+                .findFirst()
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Produto não encontrado no estoque: " + produto.getNomeProduto()));
     }
 
     public Long getId() {

@@ -1,75 +1,31 @@
 package projeto.entities;
 
-import projeto.builders.AdministradorBuilder;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "administrador")
-public class Administrador {
+public class Administrador extends Usuario {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @NotBlank(message = "Nome não pode ser vazio")
     @Column(name = "NOME", nullable = false)
     private String nome;
-    @Column(name = "LOGIN", nullable = false)
-    private String login;
-    @Column(name = "SENHA", nullable = false)
-    private String senha;
-    @Column(name = "DOCUMENTO_IDENTIFICACAO")
-    private String documentoIdentificacao;
 
     public Administrador(String nome, String login, String senha, String documentoIdentificacao) {
-        this.nome = nome;
-        this.login = login;
-        this.senha = senha;
-        this.documentoIdentificacao = documentoIdentificacao;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNome(String nome) {
+        super(login, senha, documentoIdentificacao);
         this.nome = nome;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public void setDocumentoIdentificacao(String documentoIdentificacao) {
-        this.documentoIdentificacao = documentoIdentificacao;
-    }
-
-    public String getDocumentoIdentificacao() {
-        return documentoIdentificacao;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getSenha() {
-        return senha;
+    public Administrador() {
     }
 
     public String getNome() {
         return nome;
     }
 
-    public static AdministradorBuilder builder(){
-        return new AdministradorBuilder();
+    public void setNome(String nome) {
+        this.nome = nome;
     }
-
 }
