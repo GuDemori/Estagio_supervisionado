@@ -25,7 +25,7 @@ public class FornecedorController {
         return fornecedorRepository.findAll();
     }
 
-    @GetMapping
+    @GetMapping("/{fornecedorId}")
     public Fornecedor fornecedorPorId(@PathVariable Long fornecedorId){
         logger.info("Buscando fornecedor com Id {}", fornecedorId);
 
@@ -50,7 +50,7 @@ public class FornecedorController {
         }
     }
 
-    @PutMapping
+    @PutMapping("/{fornecedorId}")
     public Fornecedor atualizarFornecedor(@PathVariable Long fornecedorId, @RequestBody Fornecedor fornecedor){
 
         logger.info("Atualizando fornecedor com ID {}", fornecedorId);
@@ -73,7 +73,7 @@ public class FornecedorController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{fornecedorId}")
     public void excluirFornecedor(@PathVariable Long fornecedorId){
         logger.info("Excluindo fornecedor com id {}", fornecedorId);
 

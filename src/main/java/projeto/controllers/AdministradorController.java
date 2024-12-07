@@ -116,7 +116,7 @@ public class AdministradorController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/produtos")
+    @GetMapping("/produtos")
     public List<Produto> listarProdutos(){
         logger.info("Produtos foram listados");
         return produtoRepository.findAll();

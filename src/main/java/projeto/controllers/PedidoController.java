@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import projeto.repository.ClienteRepository;
+import projeto.repository.EstoqueRepository;
 import projeto.repository.PedidoRepository;
 import projeto.repository.ProdutoRepository;
 
@@ -33,7 +34,7 @@ public class PedidoController {
     private ProdutoRepository produtoRepository;
 
     @Autowired
-    private Estoque estoque;
+    private EstoqueRepository estoqueRepository;
 
     @GetMapping("/cliente/{clienteId}")
     public List<Pedido> listarPedidosCliente(@PathVariable Long clienteId) {
@@ -82,6 +83,8 @@ public class PedidoController {
                 });
 
         try {
+            Estoque estoque = estoqueRepository.findById(1L)
+                            .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
             pedido.finalizarPedido(estoque);
             pedido.setStatus("entregue");
             logger.info("Pedido finalizado com sucesso: {}", pedidoId);
