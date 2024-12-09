@@ -8,8 +8,8 @@
 </head>
 <body>
 <div class="container mt-5">
-    <h2 class="text-center" th:text="${cliente.id} != null ? 'Editar Cliente' : 'Adicionar Cliente'"></h2>
-    <form th:action="@{/clientes/salvar}" th:object="${cliente}" method="post" class="mt-4">
+    <h2 class="text-center" th:text="${client.id} != null ? 'Editar Cliente' : 'Adicionar Cliente'"></h2>
+    <form th:action="@{/clientes/salvar}" th:object="${client}" method="post" class="mt-4">
         <div class="mb-3">
             <label for="id" class="form-label">ID</label>
             <input type="text" class="form-control" id="id" th:field="*{id}" readonly>

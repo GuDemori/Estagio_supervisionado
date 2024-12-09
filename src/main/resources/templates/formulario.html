@@ -9,10 +9,10 @@
 <body>
 <div class="container mt-5">
   <h2 class="text-center">Gerar Pedido em PDF</h2>
-  <form th:action="@{/pedido/gerar-pdf}" th:object="${pedido}" method="post" class="mt-4">
+  <form th:action="@{/order/gerar-pdf}" th:object="${order}" method="post" class="mt-4">
     <div class="mb-3">
-      <label for="pedido" class="form-label">Número do Pedido</label>
-      <input type="text" class="form-control" id="pedido" th:field="*{numero}" required>
+      <label for="order" class="form-label">Número do Pedido</label>
+      <input type="text" class="form-control" id="order" th:field="*{numero}" required>
     </div>
     <div class="mb-3">
       <label for="nomeCliente" class="form-label">Nome do Cliente</label>
