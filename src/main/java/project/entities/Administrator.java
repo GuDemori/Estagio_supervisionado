@@ -1,16 +1,18 @@
 package project.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "administrador")
+@Table(name = "administrator")
 public class Administrator extends User {
 
     @NotBlank(message = "O nome não pode estar em branco.")
     @Size(max = 100, message = "O nome não deve ultrapassar 100 caracteres.")
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
     /**

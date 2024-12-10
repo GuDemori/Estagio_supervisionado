@@ -12,7 +12,8 @@ import project.validation.PasswordConstraint;
 import java.util.Collection;
 import java.util.List;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User implements UserDetails {
 
     @Id

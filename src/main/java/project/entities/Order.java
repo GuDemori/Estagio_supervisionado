@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,21 +21,25 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PEDIDO_ID")
-    private Long Id;
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "CLIENTE_ID", nullable = false)
     private Client client;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "PEDIDO_ID")
     private List<Product> products = new ArrayList<>();
+
     @Column(nullable = false)
     private String status;
+
     @Column(nullable = false)
-    private String orderDate;
+    private LocalDate orderDate;
+
     @Autowired
     public Order(Client client, String status){
-        this.orderDate = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss"));
+        this.orderDate = LocalDate.now();
         this.client = client;
         this.status = status;
         logger.info("Pedido criado para o cliente: {}", client.getEstablishmentName());
@@ -46,22 +51,29 @@ public class Order {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        id = id;
     }
 
     public void setClient(Client client) {
         this.client = client;
     }
 
-    public String getOrderDate() {
+    public LocalDate getOrderDate() {
         return orderDate;
     }
 
-    public void setOrderDate(String orderDate) {
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        if (orderDate == null || orderDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("A data do pedido não pode ser nula ou no futuro.");
+        }
         this.orderDate = orderDate;
     }
 
@@ -91,30 +103,31 @@ public class Order {
         logger.info("Produto adicionado ao pedido: {}", product.getProductName());
     }
 
-    public double calcularValorTotal() {
+    public double getTotal() {
         try {
-            double valorTotal = products.stream()
-                    .mapToDouble(produto -> produto.getPrice() * produto.getQuantity())
+            // Soma o total baseado no preço e quantidade de cada produto no pedido
+            double total = products.stream()
+                    .mapToDouble(product -> product.getPrice() * product.getQuantity())
                     .sum();
-            logger.info("Valor total calculado para o pedido: {}", valorTotal);
-            return valorTotal;
+            logger.info("Valor total calculado para o pedido com ID {}: {}", id, total);
+            return total;
         } catch (Exception e) {
-            logger.error("Erro ao calcular valor total do pedido", e);
-            throw new RuntimeException("Erro ao calcular o valor total do pedido", e);
+            logger.error("Erro ao calcular o total para o pedido com ID {}", id, e);
+            throw new RuntimeException("Erro ao calcular o total do pedido", e);
         }
     }
 
     @Transactional
-    public void finalizarPedido(Estoque estoque){
+    public void finalizeOrder(Stock stock) {
         try {
             for (Product product : products) {
-                estoque.atualizarEstoque(product, 1);
-                logger.info("Estoque atualizado para o produto: {}", product.getProductName());
+                stock.updateStock(product, 1);
+                logger.info("Stock updated for the product: {}", product.getProductName());
             }
-            logger.info("Pedido finalizado para {}", client.getEstablishmentName());
-        }catch (Exception e){
-            logger.error("Erro ao finalizar o pedido do cliente: {}", client.getEstablishmentName());
-            throw new RuntimeException("Erro ao finalizar o pedido", e);
+            logger.info("Order finalized for {}", client.getEstablishmentName());
+        } catch (Exception e) {
+            logger.error("Error finalizing the order for the client: {}", client.getEstablishmentName());
+            throw new RuntimeException("Error finalizing the order", e);
         }
     }
 

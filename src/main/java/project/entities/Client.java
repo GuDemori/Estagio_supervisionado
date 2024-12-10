@@ -1,10 +1,13 @@
 package project.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,11 +15,39 @@ import java.util.List;
 @Table(name = "cliente")
 public class Client extends User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @NotBlank(message = "O nome do estabelecimento não pode ser vazio ou nulo.")
+    @Size(max = 255, message = "O nome do estabelecimento não pode ter mais que 255 caracteres.")
+    @Column(name = "nome_estabelecimento", nullable = false)
     private String establishmentName;
+
+    @NotBlank(message = "A cidade não pode ser vazia ou nula.")
+    @Size(max = 255, message = "A cidade não pode ter mais que 255 caracteres.")
+    @Column(name = "cidade", nullable = false)
     private String city;
+
+    @NotBlank(message = "O endereço não pode ser vazio ou nulo.")
+    @Size(max = 255, message = "O endereço não pode ter mais que 255 caracteres.")
+    @Column(name = "endereco", nullable = false)
     private String address;
 
+    @NotNull(message = "O tipo de estabelecimento não pode ser nulo.")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_estabelecimento", nullable = false)
+    private String establishmentType;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
+
     public Client() {}
+
+    public List<Order> getOrders() {
+        return orders;
+    }
 
     /**
      *
@@ -48,6 +79,24 @@ public class Client extends User {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEstablishmentType() {
+        return establishmentType;
+    }
+
+    public void setEstablishmentType(String establishmentType) {
+        this.establishmentType = establishmentType;
     }
 
     public String getAddress() {
